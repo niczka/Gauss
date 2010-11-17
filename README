@@ -1,0 +1,6 @@
+Macierze do testów:
+	Hilberta -> a[i,j] = 1/(i+j-1)
+	Pei -> była na jakiejś liście cwiczeniowej
+	Więksość elementów losowa z zakresu (-1;1), 2-3 elementy losowo wybrane z zakresu (-1000;1000)
+
+	Dla dobrych wyników -> dominująca przekątna
