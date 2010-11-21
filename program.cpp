@@ -9,8 +9,7 @@
 
 #define HSIZE 5
 #define VSIZE 5
-
-#define RANK 1
+#define RANK 5
 /*
  *	Aleksander Balicki - 220989;
  * 	Dominika Rogozińska - 221094
@@ -22,66 +21,19 @@
 
 using namespace std;
 typedef vector<double> row;
-typedef vector< vector<double> > matrix;
+typedef vector<row> matrix;
 
-matrix gen_random(int cols, int rows, int rank)
+void printrow(const row &r)
 {
-	matrix m(rows);
-	if(rank > min(cols, rows)|| rank == 0)
-		fprintf(stderr, "Rank wrong\n");
-
-	int lin_dep = min(cols, rows)- rank;
-
-	for(int rz = 0; rz < rows; ++rz)
-	{
-		row r0(cols);
-		m[rz] = r0;
-	}
-
-	for(int cz = 0; cz < cols; ++cz)
-		m[0][cz] = (double(rand())/ RAND_MAX);
-
-	for(int r = 1; r < rows; r++)
-	{
-		int scalar;
-		do
-			scalar = 10 * double(rand())/ RAND_MAX;
-		while(scalar == 0);
-
-		for(int c = 0; c < cols; ++c)
-		{
-			if(r == c && lin_dep <= 0)
-			{
-				double old;
-				do
-				{
-					old = m[r][c];
-					m[r][c]+= double(rand())/ RAND_MAX; 
-				}while(m[r][c] == old);
-			}
-			else if(r == c)
-			{
-				m[r][c] = m[0][c];
-				lin_dep--;
-			}
-			else
-				m[r][c] = m[0][c];
-			m[r][c] *= scalar;
-		}
-	}
-	return m;	
+	for(int i = 0; i < r.size(); ++ i)
+		cout << " " << r[i];
+	cout << endl;
 }
 
-
-
-void print(matrix m)
+void print(const matrix &m)
 {	
 	for(int i = 0; i < m[0].size(); ++i)
-	{
-		for(int j = 0; j < m.size(); ++j)
-			cout << " " << m[i][j];
-		cout << endl;
-	}
+		printrow(m[i]);
 }
 
 void random_1_1000(matrix &m)
@@ -92,13 +44,13 @@ void random_1_1000(matrix &m)
 
 	int h = ((double) rand()/RAND_MAX)*HSIZE;
 	int v = ((double) rand()/RAND_MAX)*VSIZE;
-	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998
+	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998;
 	h = ((double) rand()/RAND_MAX)*HSIZE;
 	v = ((double) rand()/RAND_MAX)*VSIZE;
-	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998
+	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998;
 	h = ((double) rand()/RAND_MAX)*HSIZE;
 	v = ((double) rand()/RAND_MAX)*VSIZE;
-	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998
+	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998;
 }
 
 void hilbert(matrix &m)
@@ -118,23 +70,7 @@ void pei(matrix &m, double d)
 				m[j][i] = 1;
 }
 
-int compute_nonempty(matrix m)
-{
-	int nonempty = 0;
-
-	for(int i = 0; i < m[0].size(); ++i)
-	{
-		int current = 0;
-		for(int j=0; j < m.size(); ++j)
-			if(m[i][j]!= 0)
-				current = 1;
-
-		nonempty += current;
-	}
-	return nonempty;
-}
-
-int find_max_in_col(matrix m, int k)
+int find_max_in_col(matrix &m, int k)
 {
 	double max = m[k][k];
 	int max_row = k;
@@ -149,7 +85,7 @@ int find_max_in_col(matrix m, int k)
 	return max_row;
 }
 
-vector<int> find_max_in_subm(matrix m, int k)
+vector<int> find_max_in_subm(matrix &m, int k)
 {
 	double max = m[k][k];
 	vector<int> row_col(2);
@@ -170,7 +106,7 @@ vector<int> find_max_in_subm(matrix m, int k)
 	return row_col;
 }
 
-void switch_rows(matrix &m , int r1, int r2)
+void switch_rows(matrix &m, int r1, int r2)
 {
 	double temp;
 	for(int i = 0; i < m[r1].size(); i++)
@@ -181,7 +117,7 @@ void switch_rows(matrix &m , int r1, int r2)
 	}
 }
 
-void switch_cols(matrix &m , int c1, int c2)
+void switch_cols(matrix &m, int c1, int c2)
 {
 	double temp;
 	for(int i = 0; i < m.size(); i++)
@@ -199,7 +135,7 @@ void subtract_row(matrix &m, int from, int what, double times)
 }
 
 
-int gauss_rank_col(matrix m)
+matrix gauss_rank_col(matrix m)
 {
 	cout << "Gaussian with choice from column" << endl;
 	cout << "Before:" << endl;
@@ -219,10 +155,10 @@ int gauss_rank_col(matrix m)
 	cout << "After:" << endl;
 	print(m);
 	cout << endl;
-	return compute_nonempty(m);
+	return m;
 }
 
-int gauss(matrix m)
+matrix gauss(matrix m)
 {
 	cout << "Gaussian without choices" << endl;
 	cout << "Before:" << endl;
@@ -240,10 +176,10 @@ int gauss(matrix m)
 	cout << "After:" << endl;
 	print(m);
 	cout << endl;
-	return compute_nonempty(m);
+	return m;
 }
 
-int gauss_rank_full(matrix m)
+matrix gauss_rank_full(matrix m)
 {
 	cout << "Gaussian with full choice" << endl;
 	cout << "Before:" << endl;
@@ -262,33 +198,26 @@ int gauss_rank_full(matrix m)
 	}
 	cout << "After:" << endl;
 	print(m);
-	return compute_nonempty(m);
+	return m;
 }
-
-
-void printrow(row r)
-{
-	for(int i = 0; i < r.size(); ++ i)
-		cout << " " << r[i];
-}
-
 
 int main(int argc,char **argv)
 {    
 	int rank;
 	srand(time(NULL));
 	
-	matrix m = gen_random(HSIZE, VSIZE, RANK);
+	matrix m, mg, mgf, mgc;
+	//trzeba napisac cos co tworzy pusta macierz
 	
 	cout << endl;
-	rank = gauss_rank_col(m);
+	mgc = gauss_rank_col(m);
 	cout << endl;
 
 	cout << endl;
-	rank = gauss_rank_full(m);
+	mgf = gauss_rank_full(m);
 	cout << endl;
 	
 	cout << endl;
-	rank = gauss(m);
+	mg = gauss(m);
 	cout << endl;
 }
