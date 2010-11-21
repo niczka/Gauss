@@ -84,14 +84,31 @@ void print(matrix m)
 	}
 }
 
-void hilbert_matrix(matrix &m)
+void random_1_1000(matrix &m)
+{
+	for(int i = 0; i < m[0].size(); ++i)
+		for(int j = 0; j < m.size(); ++j)
+			m[j][i] = -1. + ((double) rand() / RAND_MAX)*2;
+
+	int h = ((double) rand()/RAND_MAX)*HSIZE;
+	int v = ((double) rand()/RAND_MAX)*VSIZE;
+	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998
+	h = ((double) rand()/RAND_MAX)*HSIZE;
+	v = ((double) rand()/RAND_MAX)*VSIZE;
+	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998
+	h = ((double) rand()/RAND_MAX)*HSIZE;
+	v = ((double) rand()/RAND_MAX)*VSIZE;
+	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998
+}
+
+void hilbert(matrix &m)
 {
 	for(int i = 0; i < m[0].size(); ++i)
 		for(int j = 0; j < m.size(); ++j)
 			m[j][i] = 1./(i + j + 1);
 }
 
-void pei_matrix(matrix &m, double d)
+void pei(matrix &m, double d)
 {
 	for(int i = 0; i < m[0].size(); ++i)
 		for(int j = 0; j < m.size(); ++j)
