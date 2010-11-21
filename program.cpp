@@ -18,12 +18,11 @@
  *	kompilujemy:
  *		g++ program.cpp
  */
-
 using namespace std;
 typedef vector<double> row;
 typedef vector<row> matrix;
 
-void printrow(const row &r)
+void print(const row &r)
 {
 	for(int i = 0; i < r.size(); ++ i)
 		cout << " " << r[i];
@@ -33,7 +32,7 @@ void printrow(const row &r)
 void print(const matrix &m)
 {	
 	for(int i = 0; i < m[0].size(); ++i)
-		printrow(m[i]);
+		print(m[i]);
 }
 
 void random_1_1000(matrix &m)
@@ -64,10 +63,22 @@ void pei(matrix &m, double d)
 {
 	for(int i = 0; i < m[0].size(); ++i)
 		for(int j = 0; j < m.size(); ++j)
-			if(i == j)
-				m[j][i] = d;
-			else
-				m[j][i] = 1;
+			m[j][i] = (i == j) ? d : 1;
+}
+
+void dominating(matrix &m)
+{
+	for(int i = 0; i < m[0].size(); ++i)
+		for(int j = 0; j < m.size(); ++j)
+			m[j][i] = (i == j) ? 0 : -50 +  ((double)rand() / RAND_MAX) * 100;
+
+	for(int i = 0; i < m[0].size(); ++i)
+	{
+		int sum = 0;
+		for(int j = 0; j < m.size(); ++j)
+			sum += fabs(m[i][j]);
+		m[i][i] = sum + 1;
+	}
 }
 
 int find_max_in_col(matrix &m, int k)
@@ -76,7 +87,7 @@ int find_max_in_col(matrix &m, int k)
 	int max_row = k;
 	for(int i = k+1; i < m.size(); ++i)
 	{
-		if(fabs(m[i][k])> fabs(max))
+		if(fabs(m[i][k]) > fabs(max))
 		{
 			max = m[i][k];
 			max_row = i;
