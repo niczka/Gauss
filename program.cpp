@@ -35,6 +35,18 @@ void print(const matrix &m)
 		print(m[i]);
 }
 
+matrix new_matrix(int n)
+{
+	matrix m(n);
+	for (int i = 0; i < n; i++)
+		m[ i ] = row(n);
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			m[ i ][ j ] = 0.0;
+	
+	return m;
+}
+
 void random_1_1000(matrix &m)
 {
 	for(int i = 0; i < m[0].size(); ++i)
@@ -94,6 +106,21 @@ int find_max_in_col(matrix &m, int k)
 		}
 	}
 	return max_row;
+}
+
+int find_max_in_row(matrix &m, int k)
+{
+	double max = m[k][k];
+	int max_col = k;
+	for(int i = k+1; i < m.size(); ++i)
+	{
+		if(fabs(m[k][i]) > fabs(max))
+		{
+			max = m[k][i];
+			max_col = i;
+		}
+	}
+	return max_col;
 }
 
 vector<int> find_max_in_subm(matrix &m, int k)
@@ -169,6 +196,29 @@ matrix gauss_rank_col(matrix m)
 	return m;
 }
 
+matrix gauss_rank_row(matrix m)
+{
+	cout << "Gaussian with choice from column" << endl;
+	cout << "Before:" << endl;
+	print(m);
+	cout << endl;
+	for(int k = 0; k < m[0].size()- 1; ++k)
+	{
+		int max_col = find_max_in_row(m, k);
+		switch_cols(m, k, max_col);
+		if(m[k][k] != 0)
+			for(int i = k + 1; i < m.size(); i++)
+			{
+				subtract_row(m, i, k, m[i][k]/m[k][k]);
+				m[i][k] = 0.0;
+			}
+	}
+	cout << "After:" << endl;
+	print(m);
+	cout << endl;
+	return m;
+}
+
 matrix gauss(matrix m)
 {
 	cout << "Gaussian without choices" << endl;
@@ -204,7 +254,7 @@ matrix gauss_rank_full(matrix m)
 			for(int i = k + 1; i < m.size(); i++)
 			{
 				subtract_row(m, i, k, m[i][k]/ m[k][k]);
-				m[i][k] = 0;
+				m[i][k] = 0.0;
 			}
 	}
 	cout << "After:" << endl;
@@ -218,7 +268,8 @@ int main(int argc,char **argv)
 	srand(time(NULL));
 	
 	matrix m, mg, mgf, mgc;
-	//trzeba napisac cos co tworzy pusta macierz
+	m = new_matrix(5);
+	hilbert(m);
 	
 	cout << endl;
 	mgc = gauss_rank_col(m);
@@ -230,5 +281,9 @@ int main(int argc,char **argv)
 	
 	cout << endl;
 	mg = gauss(m);
+	cout << endl;
+	
+	cout << endl;
+	mg = gauss_rank_row(m);
 	cout << endl;
 }
