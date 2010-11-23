@@ -198,7 +198,7 @@ matrix gauss_rank_col(matrix m)
 
 matrix gauss_rank_row(matrix m)
 {
-	cout << "Gaussian with choice from column" << endl;
+	cout << "Gaussian with choice from row" << endl;
 	cout << "Before:" << endl;
 	print(m);
 	cout << endl;
