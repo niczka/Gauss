@@ -7,9 +7,6 @@
 #include <ctime>
 #include <cstdio>
 
-#define HSIZE 5
-#define VSIZE 5
-#define RANK 5
 /*
  *	Aleksander Balicki - 220989;
  * 	Dominika Rogozińska - 221094
@@ -18,6 +15,7 @@
  *	kompilujemy:
  *		g++ program.cpp
  */
+
 using namespace std;
 typedef vector<double> row;
 typedef vector<row> matrix;
@@ -53,14 +51,14 @@ void random_1_1000(matrix &m)
 		for(int j = 0; j < m.size(); ++j)
 			m[j][i] = -1. + ((double) rand() / RAND_MAX)*2;
 
-	int h = ((double) rand()/RAND_MAX)*HSIZE;
-	int v = ((double) rand()/RAND_MAX)*VSIZE;
+	int h = ((double) rand()/RAND_MAX)*m[0].size();
+	int v = ((double) rand()/RAND_MAX)*m.size();
 	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998;
-	h = ((double) rand()/RAND_MAX)*HSIZE;
-	v = ((double) rand()/RAND_MAX)*VSIZE;
+	h = ((double) rand()/RAND_MAX)*m[0].size();
+	v = ((double) rand()/RAND_MAX)*m.size();
 	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998;
-	h = ((double) rand()/RAND_MAX)*HSIZE;
-	v = ((double) rand()/RAND_MAX)*VSIZE;
+	h = ((double) rand()/RAND_MAX)*m[0].size();
+	v = ((double) rand()/RAND_MAX)*m.size();
 	m[h][v] += -999 + ((double) rand() / RAND_MAX)*1998;
 }
 
