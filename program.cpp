@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdio>
-
+#include <iomanip>
 /*
  *	Aleksander Balicki - 220989;
  * 	Dominika Rogozińska - 221094
@@ -23,7 +23,7 @@ typedef vector<row> matrix;
 void print(const row &r)
 {
 	for(int i = 0; i < r.size(); ++ i)
-		cout << " " << r[i];
+		cout << "  " << fixed << setprecision (9) << r[i];
 	cout << endl;
 }
 
@@ -174,10 +174,6 @@ void subtract_row(matrix &m, int from, int what, double times)
 
 matrix gauss_rank_col(matrix m)
 {
-	cout << "Gaussian with choice from column" << endl;
-	cout << "Before:" << endl;
-	print(m);
-	cout << endl;
 	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		int max_row = find_max_in_col(m, k);
@@ -189,18 +185,11 @@ matrix gauss_rank_col(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	cout << "After:" << endl;
-	print(m);
-	cout << endl;
 	return m;
 }
 
 matrix gauss_rank_row(matrix m)
 {
-	cout << "Gaussian with choice from row" << endl;
-	cout << "Before:" << endl;
-	print(m);
-	cout << endl;
 	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		int max_col = find_max_in_row(m, k);
@@ -212,18 +201,11 @@ matrix gauss_rank_row(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	cout << "After:" << endl;
-	print(m);
-	cout << endl;
 	return m;
 }
 
 matrix gauss(matrix m)
 {
-	cout << "Gaussian without choices" << endl;
-	cout << "Before:" << endl;
-	print(m);
-	cout << endl;
 	for(int k = 0; k < m.size()- 1; ++k)
 	{
 		if(m[k][k] != 0)
@@ -233,17 +215,11 @@ matrix gauss(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	cout << "After:" << endl;
-	print(m);
-	cout << endl;
 	return m;
 }
 
 matrix gauss_rank_full(matrix m)
 {
-	cout << "Gaussian with full choice" << endl;
-	cout << "Before:" << endl;
-	print(m);
 	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		vector<int> row_col = find_max_in_subm(m, k);
@@ -256,8 +232,6 @@ matrix gauss_rank_full(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	cout << "After:" << endl;
-	print(m);
 	return m;
 }
 
@@ -266,23 +240,44 @@ int main(int argc,char **argv)
 	int rank;
 	srand(time(NULL));
 	
-	matrix m, mg, mgf, mgc;
+	matrix m, mg, mgf, mgc, mgr;
 	m = new_matrix(5);
 	hilbert(m);
-	
-	cout << endl;
-	mgc = gauss_rank_col(m);
-	cout << endl;
 
 	cout << endl;
-	mgf = gauss_rank_full(m);
+	cout << "Gaussian with choice from column" << endl;
+	cout << "Before:" << endl;
+	print(m);
 	cout << endl;
+	cout << "After:" << endl;
+	mgc = gauss_rank_col(m);
+	print(mgc);
+
+	cout << endl;
+	cout << "Gaussian with full choice" << endl;
+	cout << "Before:" << endl;
+	print(m);
+	cout << endl;
+	mgf = gauss_rank_full(m);
+	cout << "After:" << endl;
+	print(mgf);
 	
+	cout << endl;
+	cout << "Gaussian without choices" << endl;
+	cout << "Before:" << endl;
+	print(m);
 	cout << endl;
 	mg = gauss(m);
-	cout << endl;
+	cout << "After:" << endl;
+	print(mg);
 	
 	cout << endl;
-	mg = gauss_rank_row(m);
+	cout << "Gaussian with choice from row" << endl;
+	cout << "Before:" << endl;
+	print(m);
 	cout << endl;
+	mgr = gauss_rank_row(m);
+	cout << "After:" << endl;
+	print(mgr);
+
 }
