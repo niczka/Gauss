@@ -37,10 +37,11 @@ matrix new_matrix(int n)
 {
 	matrix m(n);
 	for (int i = 0; i < n; i++)
+	{
 		m[ i ] = row(n);
-	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
 			m[ i ][ j ] = 0.0;
+	}
 	
 	return m;
 }
