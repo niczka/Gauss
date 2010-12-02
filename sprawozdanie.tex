@@ -1,0 +1,274 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[]{polski}
+\usepackage{a4wide}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsthm}
+\usepackage{graphicx}
+
+\title{{\textbf{Pracownia z analizy numerycznej}}\\[1ex]
+       {\Large Sprawozdanie do zadania \textbf{P2.20.}}\\[-1ex]
+       {\large Sprawdzający: dr Witold Karczewski}}
+\author{Aleksander Balicki \large nr indeksu: 220989\\
+	Dominika Rogozińska \large nr indeksu: 221094}
+
+% Kropka po numerze paragrafu, podparagrafu itp. 
+\makeatletter
+	\renewcommand\@seccntformat[1]{\csname the#1\endcsname.\quad}
+	\renewcommand\numberline[1]{#1.\hskip0.7em}
+\makeatother
+
+% Kropka po numerze tablicy, rysunku i ustawienie czcionki dla etykiety. 
+\captionsetup{labelfont=sc,labelsep=period}
+
+% Numeracja wzorów według paragrafu.
+\renewcommand{\theequation}{\arabic{section}.\arabic{subsection}.\arabic{equation}}
+
+% Zmiana nazwy figure "Rysunek" -> "Wykres"
+\renewcommand{\figurename}{Wykres}
+
+% Środowisko definition z numeracją
+\newtheorem{definition}{Definicja}
+\newtheorem{theorem}{Twierdzenie}
+
+
+\date{Wrocław, \today\ r.}
+\begin{document}
+\maketitle
+
+\section{Wstęp}
+\setcounter{equation}{0}
+Doświadczenie polega na znalezieniu efektywnego i poprawnego algorytmu liczenia rzędu macierzy. Zdefiniujmy pojęcia:
+\begin{definition}
+	Macierz o wymiarach $m$ na $n$ (macierzą o $m$ wierszach i $n$ kolumnach), nad ciałem $K$ nazywamy każdą funkcję typu $\{1,\cdots,m\} \times \{1,\cdots,n\} \rightarrow K$.
+\end{definition}
+Macierz zapisujemy tak:
+\begin{center}
+	$ \left[ \begin{array}{cccc}
+		a_{1,1} & a_{1,2} & \cdots & a_{1,n}\\
+		a_{2,1} & a_{2,2} & \cdots & a_{2,n}\\
+		\vdots  &  \vdots &        & \vdots \\
+		a_{m,1} & a_{m,2} & \cdots & a_{m,n}\\
+	\end{array} \right] $
+\end{center}
+Rząd macierzy definiujemy \cite{EK} definiujemy jako:
+\begin{definition}
+	Rzędem macierzy nazywamy wymiar przestrzeni generowanej przez jej wiersze.
+\end{definition}
+Alternatywna definicja \cite{Wi}:
+\begin{definition}
+	Rzęd macierzy to maksymalna liczba liniowo niezależnych wektorów tworzących kolumny danej macierzy.
+\end{definition}
+
+W powyższych definicjach możemy używać wierszy i kolum naprzemiennie, ponieważ wiemy \cite{EK}, że:
+\begin{theorem}
+	Rząd macierzy $A$ jest równy rzędowi macierzy transponowanej do $A$.
+\end{theorem}
+
+Obliczanie rzędu macierzy przydaje się do sprawdzania własności układów równań.
+Dzięki rzędowi macierzy możemy dowiedzieć się czegoś o ilości rozwiązań takiego układu.
+Kolejnym zastosowaniem jest sprawdzanie niezależności danych współczynników, co może być przydatne np. w statystyce.
+
+Weźmy przykładowy układ równań:
+\begin{center}
+$ \left \{ \begin{array}{ccccccccc}
+		a_{1,1}x_{1} & + & a_{1,2}x_{2} & + & \cdots & + & a_{1,n}x_{n} & = & b_{1}\\
+		a_{2,1}x_{1} & + & a_{2,2}x_{2} & + & \cdots & + & a_{2,n}x_{n} & = & b_{2}\\
+		\vdots & & \vdots & &  \vdots & & \vdots & & \vdots \\
+		a_{m,1}x_{1} & + & a_{m,2}x_{2} & + & \cdots & + & a_{m,n}x_{n} & = & b_{n}\\
+       \end{array} \right. $
+\end{center}
+Z tym układem wiążemy macierz układu - $A$:
+\begin{center}
+$A = \left[ \begin{array}{ccccccccc}
+		a_{1,1} & a_{1,2} & \cdots & a_{1,n}\\
+		a_{2,1} & a_{2,2} & \cdots & a_{2,n}\\
+		\vdots  &  \vdots &        & \vdots \\
+		a_{m,1} & a_{m,2} & \cdots & a_{m,n}\\
+       \end{array} \right] $
+\end{center}
+oraz macierz rozszerzoną układu - $A'$:
+\begin{center}
+$A' = \left[ \begin{array}{ccccccccc}
+		a_{1,1} & a_{1,2} & \cdots & a_{1,n} & b_1\\
+		a_{2,1} & a_{2,2} & \cdots & a_{2,n} & b_2\\
+		\vdots  &  \vdots &        & \vdots  & \vdots \\
+		a_{m,1} & a_{m,2} & \cdots & a_{m,n} & b_m\\
+       \end{array} \right] $
+\end{center}
+
+Z tymi macierzami związane są pewne twierdzenia \cite{EK}.
+\begin{theorem}[Kronecker-Capelli]
+	Układ równamń liniowych ma rozwiązanie wtedy i tylko wtedy, gdy rząd jego macierzy jest równy rzędowi jego macierzy rozszerzonej.
+\end{theorem}
+\begin{theorem}
+	Układ ma dokładnie jedno rozwiązanie, gdy rzędy macierzy i macierzy rozszerzonej są równe liczbie niewiadomych.
+\end{theorem}
+
+\section{Metoda eliminacji Gaussa}
+	Metoda ta została obmyślona przez Carla Friedricha Gaussa. Daje ona algorytm do rozwiązania układu równań liniowych,
+	obliczenia rzędu macierzy i znalezienia macierzy odwrotnej do danej. Algorytm składa się z 2 kroków, najpierw doprowadzamy
+	macierz do postaci schodkowej, a potem znajdujemy wynik układu poprzez podstawienie w tył.
+	W metodzie Gaussa stososuje się 3 operacje elementarne na wierszach macierzy. Te operacje to:
+	\begin{enumerate}
+		\item Zamiana kolejności wierszy
+		\item Pomnożenie wszystkich wartości w wierszu przez niezerowy skalar $\lambda$
+		\item Dodanie do dowolnego wiersza kombinacji liniowej pozostałych wierszy
+	\end{enumerate}
+	Operacje elementarne mają ciekawe własności, mianowicie:
+	\begin{itemize}
+		\item Nie zmieniają rzędu macierzy
+		\item Dowolną macierz można za pomocą skończonej liczby kroków doprowadzić do macierzy w postaci schodkowej
+	\end{itemize}
+	Rząd macierzy to liczba jej wierszy w postaci schodkowej, więc metoda obliczenia rzędu będzie polegać na sprowadzeniu macierzy
+	do postaci schodkowej, a potem policzeniu jej niezerowych wierszy.
+		Dla omówionego wyżej przypadku algorytm dla macierzy $M$ o rozmiarze $N \times N$ wyglądałby tak:
+	\begin{verbatim}
+		for k from 1 to N-1
+		    for i from k+1 to N
+		        odejmij od i-tego wiersza k-ty wiersz (M[i,k]/M[k,k]) razy
+		zwróć ilość niezerowych wierszy
+	\end{verbatim}
+		W tak naiwnie zaimplementowanym algorytmie widać od razu, gdzie możemy napotkać błędy. Jeżeli istnieje takie $n$, że $M_{n,n} = 0$,
+	to występuje dzielenie przez zero. Aby rozwiązać ten problem po prostu zamieniamy wiersz z zerem na pierwszy wiersz z niezerową wartością.
+	Jeżeli każda wartość w kolumnie jest zerowa, to omijamy kolumnę. Metoda ta nazywa się eliminacją Gaussa z wyborem elementów głównych.
+		Po zmodyfikowaniu naszego algorytmu, aby radził sobie z dzieleniem przez zero, rozważmy następującą macierz:
+	
+	\begin{center}
+	$Z = \left[ \begin{array}{ccccccccc}
+			0 & 5 & 23\\
+			0.0000000000001 &  20 & 55\\
+			45 &  3 & 5\\
+	\end{array} \right] $
+	\end{center}
+		Nasz algorytm zauważy zero na pozycji $Z_{1,1}$. Zamieni pierwszy wiersz z drugim. Uzna, że wartość $Z_{1,1}$ jest niezerowa i przejdzie
+	do następnego kroku. W trakcie algorytmu wykona się dzielenie $45/0.0000000000001$. Wiemy, z \cite{SL}, że przy dzieleniu przez liczby bliskie zeru
+	następuje utrata cyfr dokładnych wyniku. Algorytm zachowywałby się zdecydowanie lepiej, jeżeli dzielilibyśmy przez większą liczbę.
+		Algorytm wyboru elementu głównego w kolumnie:
+	\begin{verbatim}
+		for k from 1 to N-1
+		    znajdz wiersz, w którym jest maksymalna wartość |M[i,k]| dla wszystkich i > k
+		    zamień wiersz z tą maksymalną wartością z k-tym wierszem
+		    for i from k+1 to N
+		        odejmij od i-tego wiersza k-ty wiersz (M[i,k]/M[k,k]) razy
+		zwróć ilość niezerowych wierszy
+	\end{verbatim}
+	Można też szukać elementu o największym module w całej podmacierzy,
+	wydłuża to czas obliczeń, ale poprawia własności numeryczne.
+		Algorytm z wyborem pełnym:
+	\begin{verbatim}
+		for k from 1 to N-1
+		    znajdz i,l takie, że |M[i,l]| jest maksymalne dla wszystkich i > k, l > k
+		    zamień l-tą kolumnę z k-tą kolumną
+		    zamień i-ty wiersze z k-tym wierszem
+		    zamień wiersz z tą maksymalną wartością z k-tym wierszem
+		    for i from k+1 to N
+		        odejmij od i-tego wiersza k-ty wiersz (M[i,k]/M[k,k]) razy
+		zwróć ilość niezerowych wierszy
+	\end{verbatim}
+	
+\section{Rozkład QR}
+	W tej metodzie rozkładamy macierz $A$ na
+	\begin{equation}
+		A = QR
+	\end{equation}
+	gdzie $Q$ to macierz ortogonalna, czyli $Q^TQ=I$, gdzie $I$ to macierz identycznościowa, a $R$ to macierz górnotrójkątna.
+	Rząd macierzy w rozkładzie $QR$ to liczba różnych rzędów w macierzy $Q$.
+	\subsection{Ortogonalizacja Grama-Schmidta}
+		Rozważmy najpierw metodę ortogonalizacji Grama-Schmidta na kolumnach macierzy $A = [a_1,\cdots, a_n]$,
+		z działaniem zdefiniowanym tak $<v,w> = v^Tw$.
+		Zdefiniujmy projekcję:
+		\begin{equation}
+			proj_e a = \frac {<e,a>} {<e,e>} e
+		\end{equation}
+		Wtedy:
+		\begin{eqnarray*}
+			u_1 & = & a_1\\
+			e_1 & = &\frac {u_1} {||u_1||} \\
+			u_2 & = & a_2 - proj_{e_1} a_2 \\
+			e_2 & = & \frac {u_2} {||u_2||} \\
+			u_3 & = & a_3 - proj_{e_1} a_3 - proj_{e_2} a_3 \\
+			e_3 & = & \frac {u_3} {||u_3||} \\
+			\vdots\\
+			u_k & = & a_k - \sum_{j=1}^{k-1} proj_{e_k} a_k \\
+			e_k & = & \frac {u_k} {||u_k||} \\
+		\end{eqnarray*}
+		Teraz przekształćmy równania:
+		\begin{eqnarray*}
+		a_1 & = & <e_1,a_1>e_1\\
+		a_2 & = & <e_1,a_2>e_1 + <e_2,a_2>e_2\\
+		\vdots\\
+		a_k & = & \sum_{j=1}^{k} <e_j,ak>e_j
+		\end{eqnarray*}
+		gdzie $<e_i,a_i> = ||u_i||$
+		Można to zapisać jako macierz $A = QR$:
+		\begin{equation}
+			Q = [e_1,\cdots,e_n]\mbox{ i } R= \left[ \begin{array}{ccccccccc}
+		<e_1,a_1> & <e_1,a_2> & <e_1,a_3> & \cdots\\
+		0	  & <e_2,a_2> & <e_2,a_3> & \cdots\\
+		0         & 0         & <e_3,a_3> & \cdots\\
+		\vdots    & \vdots    & \vdots    & \ddots\\
+		\end{array} \right]
+		\end{equation}
+		Podczas obliczeń $u_k$ występuje dużo odejmowań, przez co macierz R może nie być dokładnie policzona.
+		Aby poprawić numeryczną stabilność wprowadzamy usprawnienia przedstawione przez Schwarza i Rutishausera.
+		Zamiast $u_k = a_k - \sum_{j=1}^{k-1} proj_{e_k} a_k$, wprowadzamy taki proces:
+		\begin{eqnarray*}
+		u_k^{(1)} & = & u_k\\
+		u_k^{(j)} & = & u_k^{(j-1)} - proj_{e_{j-1}} u_k^{(j-1)}\\
+		\end{eqnarray*}
+	\subsection{Odbicia Householdera}
+		Innym podejściem do rozkładu $QR$ jest użycie odbić Householdera. Odbicie Householdera to przekształcenie opisujące
+		odbicie o płaszczyznę lub hiperpłaszczyznę.
+
+		Dla danego wektora $w^m$ o normie $||w||_2$, odbicia Householdera zdefiniowane jest jako macierz:
+		\begin{equation}
+			H = I - 2ww^T
+		\end{equation}
+		Zauważamy, że spełnia ona warunek:
+		\begin{equation}
+			H_x = x - 2(w^Tx)w
+		\end{equation}
+		więc nie trzeba tej macierzy przy obliczeniach trzymać w pamięci.
+
+		Odpowiednia macierz Householdera ma taką własność, że jeżeli pomnożymy ją przez naszą macierz, zeruje ona elementy w danej kolumnie poniżej wybranego.
+		Elementy zerują się, ponieważ znalezliśmy odpowiednią hiperpłaszczyznę, od której wykonujemy odbicie.
+		Dla pierwszej kolumny macierzy $A$ znajdujemy taką macierz Householdera $Q_1$, że zeruje ona wszystkie elementy poniżej pierwszego.
+		Znajdujemy odpowiednie macierze aż do $Q_{n-1}$. Więc po złożeniu wszystkich macierzy w postaci $Q_k$ z macierzą $A$ otrzymujemy nasze R.
+		\begin{equation}
+			R = Q_{n-1} \cdots Q_{1} A
+		\end{equation}
+		Wiemy, że macierze Householdera są ortogonalne, więc:
+		\begin{equation}
+			Q = (Q_{n-1}\cdots Q_{1})^{-1} = Q_1\cdots Q_{n-1}
+		\end{equation}
+\section{Program}
+	Program testujący jest napisany w języku C++. Użyto typu podwójnej precyzji (double). Do generowania losowych macierzy wymyśliłem algorytm.
+	\begin{verbatim}
+		Pobierz ilość_kolumn, ilość_rzędów, rząd
+		ilość_liniowo_zależnych = rząd - min( ilość_kolumn, ilość_rzędów)
+		Losujemy 0-rowy rząd macierzy
+		Dla r = 1 do ilość_rzędów
+		    Przepisz rząd zerowy do rzędu r
+		    Jeśli( ilość_liniowo_zależnych > 0 )
+		        ilość_liniowo_zależnych--
+		    jeśli nie
+		        zastąp M[r][c] losową inną liczbą
+		    Pomnóż rząd przez losowy skalar
+	\end{verbatim}
+	Tym sposobem wygenerujemy odpowiednią liczbę liniowo zależnych wierszy, a pozostałe na pewno będą niezależne.
+\section{Wnioski}
+	Metoda Gaussa z wyborem elementów z podmacierzy jest lepsza, niż z wyborem z kolumny. Jest zwykle bliższa wyniku, ale oba te algorytmy często źle obliczają rząd.
+	Metoda QR z ortogonalizacją Grama-Schmidta jest gorsza od obu wariantów metod Gaussa.
+\begin{thebibliography}{9}
+	\bibitem{EK} Notatki z wykładu Algebra Emanuela Kierońskiego
+	\bibitem{SL} Notatki z wykładu Analiza Numeryczna Stanisława Lewanowicza
+	\bibitem{KC} Kincaid David, Cheney Ward, Analiza numeryczna
+	\bibitem{JJ} J. M. Jankowscy, Przegląd metod i algorytmów numerycznych
+	\bibitem{Wa} http://wolframalpha.com/
+	\bibitem{Wi} http://en.wikipedia.org/
+	\bibitem{Mi} http://wazniak.mimuw.edu.pl/
+\end{thebibliography}
+\end{document}
+
