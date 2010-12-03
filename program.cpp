@@ -20,6 +20,13 @@ using namespace std;
 typedef vector<double> row;
 typedef vector<row> matrix;
 typedef vector<int> vars;
+typedef vector<double> result;
+
+typedef struct
+{
+	vars v;
+	result r;
+} solution;
 
 typedef struct
 {
@@ -47,6 +54,12 @@ void print(const matrix &m)
 		print(m[i]);
 }
 
+void print(const solution &s)
+{
+	for(int i = 0; i < s.v.size(); i++)
+		cout << "\tx" << s.v[i] << " = " << fixed << setprecision (9) << s.r[i] << endl;
+}
+
 ematrix new_ematrix(matrix m, vars v)
 {
 	ematrix e;
@@ -55,11 +68,19 @@ ematrix new_ematrix(matrix m, vars v)
 	return e;
 }
 
+solution new_solution(vars v, result r)
+{
+	solution s;
+	s.v = v;
+	s.r = r;
+	return s;
+}
+
 vars new_vars(int n)
 {
-	vars v;
+	vars v(n);
 	for(int i = 0; i < n; i++)
-		v.push_back(i);
+		v[i]=i;
 	return v;
 }
 
@@ -283,6 +304,19 @@ ematrix gauss_rank_full(matrix m)
 	return new_ematrix(m,v);
 }
 
+solution forward_substitution(ematrix e, row b)
+{
+	matrix m = e.m;
+	result r(m.size());
+	for(int i = (m.size()) - 1; i >= 0; i--)
+	{
+    		r[i] = b[i];
+    		for (int j = i + 1; j < m.size(); j++)
+      			r[i] -= m[i][j] * r[j];
+    		r[i] /= m[i][i];
+  	}
+	return new_solution(e.v, r);
+}
 
 
 int main(int argc,char **argv)
@@ -290,9 +324,16 @@ int main(int argc,char **argv)
 	int rank;
 	srand(time(NULL));
 	
+	solution s;
 	matrix m;
 	ematrix  mg, mgf, mgc, mgr;
 	m = new_matrix(5);
+	row b(5);
+	b[0] = 1;
+	b[1] = 10;
+	b[2] = 24;
+	b[3] = 5;
+	b[4] = 7;
 	hilbert(m);
 
 	cout << endl;
@@ -305,6 +346,9 @@ int main(int argc,char **argv)
 	print(mgc.m);
 	cout << "Variable order:" << endl;
 	print(mgc.v);
+	cout << "Solution:" << endl;
+	s = forward_substitution(mgc, b);
+	print(s);
 
 	cout << endl;
 	cout << "Gaussian with full choice" << endl;
@@ -316,7 +360,9 @@ int main(int argc,char **argv)
 	print(mgf.m);
 	cout << "Variable order:" << endl;
 	print(mgf.v);
-
+	cout << "Solution:" << endl;
+	s = forward_substitution(mgf, b);
+	print(s);
 	
 	cout << endl;
 	cout << "Gaussian without choices" << endl;
@@ -328,6 +374,9 @@ int main(int argc,char **argv)
 	print(mg.m);
 	cout << "Variable order:" << endl;
 	print(mg.v);
+	cout << "Solution:" << endl;
+	s = forward_substitution(mg, b);
+	print(s);
 
 	
 	cout << endl;
@@ -340,6 +389,9 @@ int main(int argc,char **argv)
 	print(mgr.m);
 	cout << "Variable order:" << endl;
 	print(mgr.v);
+	cout << "Solution:" << endl;
+	s = forward_substitution(mgr, b);
+	print(s);
 
 
 }
