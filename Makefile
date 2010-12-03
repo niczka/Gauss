@@ -1,6 +1,6 @@
-all: doc prog
+all: sprawozdanie.pdf program
 
-doc:
+sprawozdanie.pdf: sprawozdanie.tex
 	texi2pdf sprawozdanie.tex
-prog:
-	g++ program.cpp
+program: program.cpp
+	g++ -o program program.cpp

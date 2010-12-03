@@ -19,6 +19,20 @@
 using namespace std;
 typedef vector<double> row;
 typedef vector<row> matrix;
+typedef vector<int> vars;
+
+typedef struct
+{
+	vars v;
+	matrix m;
+} ematrix;
+
+void print(const vars &v)
+{
+	for(int i = 0; i < v.size(); ++ i)
+		cout << " x" << v[i];
+	cout << endl;
+}
 
 void print(const row &r)
 {
@@ -31,6 +45,22 @@ void print(const matrix &m)
 {	
 	for(int i = 0; i < m[0].size(); ++i)
 		print(m[i]);
+}
+
+ematrix new_ematrix(matrix m, vars v)
+{
+	ematrix e;
+	e.m = m;
+	e.v = v;
+	return e;
+}
+
+vars new_vars(int n)
+{
+	vars v;
+	for(int i = 0; i < n; i++)
+		v.push_back(i);
+	return v;
 }
 
 matrix new_matrix(int n)
@@ -172,12 +202,15 @@ void subtract_row(matrix &m, int from, int what, double times)
 }
 
 
-matrix gauss_rank_col(matrix m)
+ematrix gauss_rank_col(matrix m)
 {
+	vars v = new_vars(m.size());
 	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		int max_row = find_max_in_col(m, k);
+		
 		switch_rows(m, k, max_row);
+		
 		if(m[k][k] != 0)
 			for(int i = k + 1; i < m.size(); i++)
 			{
@@ -185,15 +218,22 @@ matrix gauss_rank_col(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	return m;
+	return new_ematrix(m,v);
 }
 
-matrix gauss_rank_row(matrix m)
+ematrix gauss_rank_row(matrix m)
 {
+	vars v = new_vars(m.size());
 	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		int max_col = find_max_in_row(m, k);
+		
 		switch_cols(m, k, max_col);
+		
+		int temp = v[k];
+		v[k] = v[max_col];
+		v[max_col] = temp;
+
 		if(m[k][k] != 0)
 			for(int i = k + 1; i < m.size(); i++)
 			{
@@ -201,11 +241,12 @@ matrix gauss_rank_row(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	return m;
+	return new_ematrix(m,v);
 }
 
-matrix gauss(matrix m)
+ematrix gauss(matrix m)
 {
+	vars v = new_vars(m.size());
 	for(int k = 0; k < m.size()- 1; ++k)
 	{
 		if(m[k][k] != 0)
@@ -215,16 +256,23 @@ matrix gauss(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	return m;
+	return new_ematrix(m,v);
 }
 
-matrix gauss_rank_full(matrix m)
+ematrix gauss_rank_full(matrix m)
 {
+	vars v = new_vars(m.size());
 	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		vector<int> row_col = find_max_in_subm(m, k);
+		
 		switch_rows(m, row_col.front(), k);
 		switch_cols(m, row_col.back(), k);
+
+		int temp = v[k];
+		v[k] = v[row_col.back()];
+		v[row_col.back()] = temp;
+
 		if(m[k][k]!= 0)
 			for(int i = k + 1; i < m.size(); i++)
 			{
@@ -232,15 +280,18 @@ matrix gauss_rank_full(matrix m)
 				m[i][k] = 0.0;
 			}
 	}
-	return m;
+	return new_ematrix(m,v);
 }
+
+
 
 int main(int argc,char **argv)
 {    
 	int rank;
 	srand(time(NULL));
 	
-	matrix m, mg, mgf, mgc, mgr;
+	matrix m;
+	ematrix  mg, mgf, mgc, mgr;
 	m = new_matrix(5);
 	hilbert(m);
 
@@ -251,7 +302,9 @@ int main(int argc,char **argv)
 	cout << endl;
 	cout << "After:" << endl;
 	mgc = gauss_rank_col(m);
-	print(mgc);
+	print(mgc.m);
+	cout << "Variable order:" << endl;
+	print(mgc.v);
 
 	cout << endl;
 	cout << "Gaussian with full choice" << endl;
@@ -260,7 +313,10 @@ int main(int argc,char **argv)
 	cout << endl;
 	mgf = gauss_rank_full(m);
 	cout << "After:" << endl;
-	print(mgf);
+	print(mgf.m);
+	cout << "Variable order:" << endl;
+	print(mgf.v);
+
 	
 	cout << endl;
 	cout << "Gaussian without choices" << endl;
@@ -269,7 +325,10 @@ int main(int argc,char **argv)
 	cout << endl;
 	mg = gauss(m);
 	cout << "After:" << endl;
-	print(mg);
+	print(mg.m);
+	cout << "Variable order:" << endl;
+	print(mg.v);
+
 	
 	cout << endl;
 	cout << "Gaussian with choice from row" << endl;
@@ -278,6 +337,9 @@ int main(int argc,char **argv)
 	cout << endl;
 	mgr = gauss_rank_row(m);
 	cout << "After:" << endl;
-	print(mgr);
+	print(mgr.m);
+	cout << "Variable order:" << endl;
+	print(mgr.v);
+
 
 }
