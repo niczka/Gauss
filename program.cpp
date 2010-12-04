@@ -321,8 +321,12 @@ solution forward_substitution(const ematrix &e, const row &b)
 solution sort(const solution &s)
 {
 	solution s1;
+	s1.v = new_vars(s.v.size());
+	row r(s.v.size());
+	s1.r = r;
+
 	for(int i = 0; i < s.v.size(); i++)
-		s1[s.v[i]] = s.r[i];
+		s1.r[s.v[i]] = s.r[i];
 	return s1;
 }
 
@@ -354,7 +358,7 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mgc.v);
 	cout << "Solution:" << endl;
-	s = forward_substitution(mgc, b);
+	s = sort(forward_substitution(mgc, b));
 	print(s);
 
 	cout << endl;
@@ -368,7 +372,7 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mgf.v);
 	cout << "Solution:" << endl;
-	s = forward_substitution(mgf, b);
+	s = sort(forward_substitution(mgf, b));
 	print(s);
 	
 	cout << endl;
@@ -382,7 +386,7 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mg.v);
 	cout << "Solution:" << endl;
-	s = forward_substitution(mg, b);
+	s = sort(forward_substitution(mg, b));
 	print(s);
 
 	
@@ -397,7 +401,7 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mgr.v);
 	cout << "Solution:" << endl;
-	s = forward_substitution(mgr, b);
+	s = sort(forward_substitution(mgr, b));
 	print(s);
 
 
