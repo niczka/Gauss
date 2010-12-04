@@ -304,7 +304,7 @@ ematrix gauss_rank_full(matrix m)
 	return new_ematrix(m,v);
 }
 
-solution forward_substitution(ematrix e, row b)
+solution forward_substitution(const ematrix &e, const row &b)
 {
 	matrix m = e.m;
 	result r(m.size());
@@ -318,6 +318,13 @@ solution forward_substitution(ematrix e, row b)
 	return new_solution(e.v, r);
 }
 
+solution sort(const solution &s)
+{
+	solution s1;
+	for(int i = 0; i < s.v.size(); i++)
+		s1[s.v[i]] = s.r[i];
+	return s1;
+}
 
 int main(int argc,char **argv)
 {    
