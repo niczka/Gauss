@@ -358,6 +358,9 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mgc.v);
 	cout << "Solution:" << endl;
+	s = forward_substitution(mgc, b);
+	print(s);
+	cout << "Sorted solution" << endl;
 	s = sort(forward_substitution(mgc, b));
 	print(s);
 
@@ -372,6 +375,9 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mgf.v);
 	cout << "Solution:" << endl;
+	s = forward_substitution(mgf, b);
+	print(s);
+	cout << "Sorted solution" << endl;
 	s = sort(forward_substitution(mgf, b));
 	print(s);
 	
@@ -386,6 +392,9 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mg.v);
 	cout << "Solution:" << endl;
+	s = forward_substitution(mg, b);
+	print(s);
+	cout << "Sorted solution" << endl;
 	s = sort(forward_substitution(mg, b));
 	print(s);
 
@@ -401,6 +410,9 @@ int main(int argc,char **argv)
 	cout << "Variable order:" << endl;
 	print(mgr.v);
 	cout << "Solution:" << endl;
+	s = forward_substitution(mgr, b);
+	print(s);
+	cout << "Sorted solution" << endl;
 	s = sort(forward_substitution(mgr, b));
 	print(s);
 
