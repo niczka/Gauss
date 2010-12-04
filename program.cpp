@@ -266,7 +266,6 @@ void scale_row(matrix &m, int r, int el, row &b)
 	m[r][el] = 1;
 }
 
-
 ematrix gauss_rank_col(matrix m, row b)
 {
 	vars v = new_vars(m.size());
