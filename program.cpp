@@ -253,21 +253,34 @@ void subtract_row(matrix &m, int from, int what, double times, row &b)
 	b[from] -= times * b[what];
 }
 
+void scale_row(matrix &m, int r, int el, row &b)
+{
+	for(int i = 0; i < el; i++)
+		m[r][i] /= m[r][el];
+	
+	for(int i = el + 1; i < m[0].size(); i++)
+		m[r][i] /= m[r][el];
+	
+	b[r] /= m[r][el];
+
+	m[r][el] = 1;
+}
+
 
 ematrix gauss_rank_col(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m[0].size()- 1; ++k)
+	for(int k = 0; k < m[0].size(); ++k)
 	{
 		int max_row = find_max_in_col(m, k);
 		switch_rows(m, k, max_row, b);
 		
-		if(m[k][k] != 0)
-			for(int i = k + 1; i < m.size(); i++)
-			{
-				subtract_row(m, i, k, m[i][k]/m[k][k], b);
-				m[i][k] = 0.0;
-			}
+		scale_row(m, k, k, b);
+		for(int i = k + 1; i < m.size(); i++)
+		{
+			subtract_row(m, i, k, m[i][k], b);
+			m[i][k] = 0.0;
+		}
 	}
 	return new_ematrix(m, v, b);
 }
@@ -275,17 +288,17 @@ ematrix gauss_rank_col(matrix m, row b)
 ematrix gauss_rank_row(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m[0].size()- 1; ++k)
+	for(int k = 0; k < m[0].size(); ++k)
 	{
 		int max_col = find_max_in_row(m, k);
 		switch_cols(m, k, max_col, v);
-
-		if(m[k][k] != 0)
-			for(int i = k + 1; i < m.size(); i++)
-			{
-				subtract_row(m, i, k, m[i][k]/m[k][k], b);
-				m[i][k] = 0.0;
-			}
+		
+		scale_row(m, k, k, b);
+		for(int i = k + 1; i < m.size(); i++)
+		{
+			subtract_row(m, i, k, m[i][k], b);
+			m[i][k] = 0.0;
+		}
 	}
 	return new_ematrix(m, v, b);
 }
@@ -293,14 +306,14 @@ ematrix gauss_rank_row(matrix m, row b)
 ematrix gauss(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m.size()- 1; ++k)
+	for(int k = 0; k < m.size(); ++k)
 	{
-		if(m[k][k] != 0)
-			for(int i = k + 1; i < m.size(); i++)
-			{
-				subtract_row(m, i, k, m[i][k]/m[k][k], b);
-				m[i][k] = 0.0;
-			}
+		scale_row(m, k, k, b);
+		for(int i = k + 1; i < m.size(); i++)
+		{
+			subtract_row(m, i, k, m[i][k], b);
+			m[i][k] = 0.0;
+		}
 	}
 	return new_ematrix(m, v, b);
 }
@@ -308,19 +321,19 @@ ematrix gauss(matrix m, row b)
 ematrix gauss_rank_full(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m[0].size()- 1; ++k)
+	for(int k = 0; k < m[0].size(); ++k)
 	{
 		vector<int> row_col = find_max_in_subm(m, k);
 		switch_rows(m, row_col.front(), k, b);
 		switch_cols(m, row_col.back(), k, v);
 
 
-		if(m[k][k]!= 0)
-			for(int i = k + 1; i < m.size(); i++)
-			{
-				subtract_row(m, i, k, m[i][k]/ m[k][k], b);
-				m[i][k] = 0.0;
-			}
+		scale_row(m, k, k, b);
+		for(int i = k + 1; i < m.size(); i++)
+		{
+			subtract_row(m, i, k, m[i][k], b);
+			m[i][k] = 0.0;
+		}
 	}
 	return new_ematrix(m, v, b);
 }
