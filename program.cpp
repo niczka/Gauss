@@ -359,13 +359,29 @@ int main(int argc,char **argv)
 	solution s;
 	matrix m;
 	ematrix mg, mgf, mgc, mgr;
-	m = new_matrix(2);
-	m[0][0] = 1; m[0][1] = 2;
-	m[1][0] = 3; m[1][1] = 4;
-	row b(2);
-	b[0] = 13;
-	b[1] = 31;
-	//hilbert(m);
+	m = new_matrix(4);
+	m[0][0] = 1;
+	m[0][1] = 1;
+	m[0][2] = 1;
+	m[0][3] = 1;
+	m[1][0] = 2;
+	m[1][1] = 2;
+	m[1][2] = 1;
+	m[1][3] = 1;
+	m[2][0] = 4;
+	m[2][1] = 1;
+	m[2][2] = 3;
+	m[2][3] = 1;
+	m[3][0] = 3;
+	m[3][1] = 5;
+	m[3][2] = 5;
+	m[3][3] = 4;
+	
+	row b(4);
+	b[0] = 21;
+	b[1] = 17;
+	b[2] = 18;
+	b[3] = 13;
 
 	cout << endl;
 	cout << "Gaussian with choice from column" << endl;
