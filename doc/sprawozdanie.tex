@@ -240,13 +240,13 @@ element spośród $O(n^2)$ elementów.
         \end{center}
         Macierz dominująca przekątniowo jest macierzą, dla której możemy bezpiecznie zastosować metodę Gaussa bez wyboru elementów głównych, ponieważ takie elementy już znajdują się na przekątnej. wykresy funkcji prezentujące różne rodzaje metody Gaussa praktycznie się pokrywają - różnice między dokładnością rozwiązań są niewielkie. W tabeli 1. zostały przedstawione wyniki dla niektórych prób.
         \begin{center}
-            \begin{tabular}{ | l | l | l | l | p{3cm} | }
+            \begin{tabular}{ | l | l | l | l | l | }
             \hline
-            Rozmiar macierzy & Gauss & Gauss z wyb. z kolumny & Gauss z wyb. z wiersza & Gauss z pełnym wyborem \\ \hline
-            19 & 0.0000000000002273 & 0.0000000000002273 & 0.0000000000002273 & 0.0000000000001136 \\ \hline
-            22 & 0.0000000000001136 & 0.0000000000001136 & 0.0000000000001136 & 0.0000000000002842 \\ \hline
-            31 & 0.0000000000003979 & 0.0000000000003979 & 0.0000000000003979 & 0.0000000000003410 \\ \hline
-            38 & 0.0000000000004547 & 0.0000000000004547 & 0.0000000000004547 & 0.0000000000002842 \\ \hline
+            Rozmiar & Gauss & Gauss z wyb. z kolumny & Gauss z wyb. z wiersza & Gauss z pełnym wyborem \\ \hline
+            19 & $0.2273 \cdot 10^{-12}$ & $0.2273 \cdot 10^{-12}$ & $0.2273 \cdot 10^{-12}$ & $0.1136 \cdot 10^{-12}$ \\ \hline
+            22 & $0.1136 \cdot 10^{-12}$ & $0.1136 \cdot 10^{-12}$ & $0.1136 \cdot 10^{-12}$ & $0.2842 \cdot 10^{-12}$ \\ \hline
+            31 & $0.3979 \cdot 10^{-12}$ & $0.3979 \cdot 10^{-12}$ & $0.3979 \cdot 10^{-12}$ & $0.3410 \cdot 10^{-12}$ \\ \hline
+            38 & $0.4547 \cdot 10^{-12}$ & $0.4547 \cdot 10^{-12}$ & $0.4547 \cdot 10^{-12}$ & $0.2842 \cdot 10^{-12}$ \\ \hline
             \end{tabular}
         \end{center}
         Możemy zauważyć, że jedynym zauważalnie różniącym się wynikiem jest wartość błędu dla eliminacji Gaussa z pełnym wyborem elementów głównych. Różnica ta nie jest jednak znacząco duża.
