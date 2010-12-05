@@ -104,7 +104,7 @@ $b = \left[ \begin{array}{c}
 \begin{definition}
     Macierzą o dominującej przekątnej nazywamy macierz, w której\\
     \begin{center}
-    $\displaystyle \bigwedge_{1 \leq i \leq n } \sum_{ j \neq i } |a_{i,j}| \leq |a_{i,i}| $
+    $ \bigwedge_{1 \leq i \leq n } \sum_{ j \neq i } |a_{i,j}| \leq |a_{i,i}| $
     \end{center}
 \end{definition}
 
@@ -130,68 +130,53 @@ Wartość $\tilde x$ to nasze przybliżone rozwiązanie, więc $\| b - A \tilde{
     \end{center}
     Definicja ta jest taka sama dla każdej zwartej normy.
 \end{definition}
-\newpage
+
 \section{Metoda eliminacji Gaussa}
-Metoda ta została stworzona przez Carla Friedricha Gaussa. Daje ona algorytm do rozwiązania układu równań liniowych,
-obliczenia rzędu macierzy i znalezienia macierzy odwrotnej do danej. Algorytm składa się z 2 kroków, najpierw doprowadzamy
-macierz do postaci schodkowej, a następnie znajdujemy wynik układu poprzez podstawienie w tył(funkcja back substitution).
-W metodzie Gaussa stososuje się 3 operacje elementarne na wierszach macierzy. Te operacje to:
-\begin{enumerate}
-	\item Zamiana kolejności wierszy
-	\item Pomnożenie wszystkich wartości w wierszu przez niezerowy skalar $\lambda$
-	\item Dodanie do dowolnego wiersza kombinacji liniowej pozostałych wierszy
-\end{enumerate}
-Operacje elementarne mają ciekawe własności, mianowicie:
-\begin{itemize}
-	\item Nie zmieniają rzędu macierzy
-	\item Dowolną macierz można za pomocą skończonej liczby kroków doprowadzić do macierzy w postaci schodkowej
-\end{itemize}
-\subsection{Metoda eliminacji Gaussa bez wyboru elementów głównych}
-Wykonujemy następujący algorytm:
-\begin{verbatim}
-        for k from 1 to N
-                przeskaluj k-ty wiersz, aby m[k,k] = 1
-                for i from k+1 to N
-                        odejmij od i-tego wiersza k-ty wiersz m[i,k] razy
-        wykonaj back_substitution
-\end{verbatim}
-Powyższy algorytm ma pewien problem. Co jeżeli $m[k,k] = 0$ dla któregoś $k$. Nie jesteśmy wtedy w stanie
-znaleść takiego skalaru, aby po pomnożeniu na tym miejscu znalazło się $1$. Nawet jeżeli odrzucimy te przypadki,
-to na przekątnej mogą się znaleść elementy bardzo bliskie zeru. Wtedy cały nasz wiersz zostanie podzielony przez
-liczbę bliską zeru i wygeneruje duże błędy.
-
-\subsection{Metoda eliminacji Gaussa z wyborem elementów głownych z wiersza lub kolumny}
-Jednym sposobem poradzenia sobie z tym problemem jest wybór elementów głównych z wiersza lub kolumny.
-W wyborze głównego elementu z wiersza, w każdym kroku głównej pętli naszego programu wyszukujemy maksymalny element
-z wiersza i zamieniamy kolumny obecną i tą z maksymalnym elementem. Wiemy, że zamiana kolumn przestawia nam tylko
-kolejność zmiennych w rozwiązaniu. Tym sposobem zapewniamy to, że zawsze dzielimy przez największy element z wiersza,
-czyli dzielenie przez liczby bliskie zeru występuje rzadziej. Analogicznie działa wybór głównego elementu z kolumny.
-\begin{verbatim}
-        for k from 1 to N
-                znajdz maksymalną wartość |m[k,i]| dla wszystkich i > k
-                zamień kolumnę z maksymalną wartością z k-tą kolumną
-                przeskaluj k-ty wiersz, aby m[k,k] = 1
-                for i from k+1 to N
-                        odejmij od i-tego wiersza k-ty wiersz m[i,k] razy
-        wykonaj back_substitution
-\end{verbatim}
-
-\subsection{Metoda eliminacji Gaussa z pełnym wyborem elementów głównych(z podmacierzy)}
-Jest to rozszerzenie poprzedniego pomysłu z wyborem elementów, tym razem wyszukujemy maksymalnego elementu z podmacierzy i 
-dokonujemy zamiany wiersza oraz kolumny. Metoda ta jest kosztowna obliczeniowo, bo w każdym kroku musimy znaleść maksymalny
-element spośród $O(n^2)$ elementów.
-
-\begin{verbatim}
-        for k from 1 to N-1
-                znajdz i,l takie, że |m[i,l]| jest maksymalne dla wszystkich i > k, l > k
-                zamień l-tą kolumnę z k-tą kolumną
-                zamień i-ty wiersze z k-tym wierszem
-                przeskaluj k-ty wiersz, aby m[k,k] = 1
-                for i from k+1 to N
-                        odejmij od i-tego wiersza k-ty wiersz m[i,k] razy
-        wykonaj back_substitution1
-\end{verbatim}
-
+	Metoda ta została stworzona przez Carla Friedricha Gaussa. Daje ona algorytm do rozwiązania układu równań liniowych,
+	obliczenia rzędu macierzy i znalezienia macierzy odwrotnej do danej. Algorytm składa się z 2 kroków, najpierw doprowadzamy
+	macierz do postaci schodkowej, a następnie znajdujemy wynik układu poprzez podstawienie w tył(funkcja back substitution).
+	W metodzie Gaussa stososuje się 3 operacje elementarne na wierszach macierzy. Te operacje to:
+	\begin{enumerate}
+		\item Zamiana kolejności wierszy
+		\item Pomnożenie wszystkich wartości w wierszu przez niezerowy skalar $\lambda$
+		\item Dodanie do dowolnego wiersza kombinacji liniowej pozostałych wierszy
+	\end{enumerate}
+	Operacje elementarne mają ciekawe własności, mianowicie:
+	\begin{itemize}
+		\item Nie zmieniają rzędu macierzy
+		\item Dowolną macierz można za pomocą skończonej liczby kroków doprowadzić do macierzy w postaci schodkowej
+	\end{itemize}
+	\subsection{Metoda eliminacji Gaussa bez wyboru elementów głównych}%TODO
+    \subsection{Metoda eliminacji Gaussa z wyborem elementów głownych z wiersza}%TODO
+    \subsection{Metoda eliminacji Gaussa z wyborem elementów głównych z kolumny}%TODO
+    \subsection{Metoda eliminacji Gaussa z pełnym wyborem elementów głównych(z podmacierzy)}%TODO
+%tu się zaczyna Twoje stare
+		Nasz algorytm zauważy zero na pozycji $Z_{1,1}$. Zamieni pierwszy wiersz z drugim. Uzna, że wartość $Z_{1,1}$ jest niezerowa i przejdzie
+	do następnego kroku. W trakcie algorytmu wykona się dzielenie $45/0.0000000000001$. Wiemy, z \cite{SL}, że przy dzieleniu przez liczby bliskie zeru
+	następuje utrata cyfr dokładnych wyniku. Algorytm zachowywałby się zdecydowanie lepiej, jeżeli dzielilibyśmy przez większą liczbę.
+		Algorytm wyboru elementu głównego w kolumnie:
+	\begin{verbatim}
+		for k from 1 to N-1
+		    znajdz wiersz, w którym jest maksymalna wartość |M[i,k]| dla wszystkich i > k
+		    zamień wiersz z tą maksymalną wartością z k-tym wierszem
+		    for i from k+1 to N
+		        odejmij od i-tego wiersza k-ty wiersz (M[i,k]/M[k,k]) razy
+		zwróć ilość niezerowych wierszy
+	\end{verbatim}
+	Można też szukać elementu o największym module w całej podmacierzy,
+	wydłuża to czas obliczeń, ale poprawia własności numeryczne.
+		Algorytm z wyborem pełnym:
+	\begin{verbatim}
+		for k from 1 to N-1
+		    znajdz i,l takie, że |M[i,l]| jest maksymalne dla wszystkich i > k, l > k
+		    zamień l-tą kolumnę z k-tą kolumną
+		    zamień i-ty wiersze z k-tym wierszem
+		    zamień wiersz z tą maksymalną wartością z k-tym wierszem
+		    for i from k+1 to N
+		        odejmij od i-tego wiersza k-ty wiersz (M[i,k]/M[k,k]) razy
+		zwróć ilość niezerowych wierszy
+	\end{verbatim}
+%tu się kończy Twoje stare
 \section{Program}
 	Program testujący jest napisany w języku C++. Użyto typu podwójnej precyzji (double). Wyniki zostały zapisane jako plik z rozszerzeniem .csv, a następnie opracowane graficznie za pomocą programu gnuplot.
 	
@@ -201,10 +186,8 @@ element spośród $O(n^2)$ elementów.
             \includegraphics[width=140mm]{hilbert_plot.png}
         \end{center}
         Wskaźnik uwarunkowania macierzy Hilberta o rozmiarze $n$ to:
-        \begin{center}
-            $ \kappa(H_{n}) = O(\frac{e^{3.5255n}}{\sqrt{n}})$
-        \end{center}
-        Nawet dla małych wartości $n$ wskaźnik uwarunkowania tej macierzy jest zbyt duży, aby dane mogły być reprezentatywne. Powyższy wykres nie prezentuje całego zakresu danych, które wygenerował program.
+        $ \kappa(H_{n}) = O(\frac{e^3.5255n}{\sqrt{n}})$
+        Źle uwarunkowana, leci w kosmos. Wykres nie obejmuje całego zakresu.
     \subsection{Macierz Pei}
         \begin{center}
             \includegraphics[width=140mm]{pei_plot.png}
