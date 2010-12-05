@@ -87,28 +87,26 @@ $b = \left[ \begin{array}{c}
     \begin{center}
     $a_{i,j} = \frac{1}{i+j-1}$
     \end{center}
-\end{definition}\\
+\end{definition} 
 
 \begin{definition}
 	Macierzą Pei nazywamy macierz $n$ x $n$, w której\\
   \[
   a_{i,j} = \left\{
   \begin{array}{l l}
-    1 \quad \text{ $i$ \neq $j$ }\\
-    d \quad \text{ $i$ = $j$ }\\
+    1 \quad \texttt{ $i$ $\neq$ $j$ }\\
+    d \quad \texttt{ $i$ $=$ $j$ }\\
   \end{array} \right.
   \]
     gdzie $d$ jest parametrem.
-\end{definition}\\
+\end{definition}
 
 \begin{definition}
     Macierzą o dominującej przekątnej nazywamy macierz, w której\\
     \begin{center}
-    $ \bigwedge_{\substack{i}} 
-        \sum_{\substack{{ j \neq i }}
-            |a_{i,j}| \leq |a_{i,i}| $
+    $ \bigwedge_{1 \leq i \leq n } \sum_{ j \neq i } |a_{i,j}| \leq |a_{i,i}| $
     \end{center}
-\end{definition}\\
+\end{definition}
 
 %TODO: wskaźnik uwarunkowania
 
@@ -117,7 +115,7 @@ $b = \left[ \begin{array}{c}
     \begin{center}
         $ \|x\|_{\infty} = max \{|x_{i}| : i = 1, 2, \cdots , n \}$
     \end{center}
-\end{definition}\\
+\end{definition}
 
 Normy maksimum użyjemy jako wskaźnika numerycznej poprawności metody Gaussa, porównując wartości $ \| b - A \tilde{x} \|_{\infty}$ dla wszystkich prób.
 
