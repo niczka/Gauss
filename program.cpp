@@ -13,7 +13,7 @@
  *	Pracownia 2.20
  *	Porównanie eliminacji Gaussa: bez wyboru, z wyborem wierszy, kolumn, pełnym
  *	kompilujemy:
- *		g++ program.cpp
+ *		g++ program.cpp >> out.csv
  */
 
 using namespace std;
@@ -21,6 +21,8 @@ typedef vector<double> row;
 typedef vector<row> matrix;
 typedef vector<int> vars;
 typedef vector<double> result;
+
+#define PRECISION 20
 
 typedef struct
 {
@@ -78,7 +80,7 @@ void print(const ematrix &e)
 void print(const solution &s)
 {
 	for(int i = 0; i < s.v.size(); i++)
-		cout << "\tx" << s.v[i] << " = " << fixed << setprecision (9) << s.r[i] << endl;
+		cout << "\tx" << s.v[i] << " = " << fixed << setprecision (30) << s.r[i] << endl;
 }
 
 ematrix new_ematrix(matrix m, vars v, row b)
@@ -104,6 +106,20 @@ vars new_vars(int n)
 	for(int i = 0; i < n; i++)
 		v[i]=i;
 	return v;
+}
+
+
+void random_row(row &r)
+{
+	for (int i = 0; i < r.size(); i++)
+		r[i] = -500 +  ((double)rand() / RAND_MAX) * 1000;
+}
+
+row new_random_row(int n)
+{
+	row r(n);
+	random_row(r);
+	return r;
 }
 
 matrix new_matrix(int n)
@@ -253,33 +269,21 @@ void subtract_row(matrix &m, int from, int what, double times, row &b)
 	b[from] -= times * b[what];
 }
 
-void scale_row(matrix &m, int r, int el, row &b)
-{
-	for(int i = 0; i < el; i++)
-		m[r][i] /= m[r][el];
-	
-	for(int i = el + 1; i < m[0].size(); i++)
-		m[r][i] /= m[r][el];
-	
-	b[r] /= m[r][el];
-
-	m[r][el] = 1;
-}
 
 ematrix gauss_rank_col(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m[0].size(); ++k)
+	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		int max_row = find_max_in_col(m, k);
 		switch_rows(m, k, max_row, b);
 		
-		scale_row(m, k, k, b);
-		for(int i = k + 1; i < m.size(); i++)
-		{
-			subtract_row(m, i, k, m[i][k], b);
-			m[i][k] = 0.0;
-		}
+		if(m[k][k] != 0)
+			for(int i = k + 1; i < m.size(); i++)
+			{
+				subtract_row(m, i, k, m[i][k]/m[k][k], b);
+				m[i][k] = 0.0;
+			}
 	}
 	return new_ematrix(m, v, b);
 }
@@ -287,17 +291,17 @@ ematrix gauss_rank_col(matrix m, row b)
 ematrix gauss_rank_row(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m[0].size(); ++k)
+	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		int max_col = find_max_in_row(m, k);
 		switch_cols(m, k, max_col, v);
-		
-		scale_row(m, k, k, b);
-		for(int i = k + 1; i < m.size(); i++)
-		{
-			subtract_row(m, i, k, m[i][k], b);
-			m[i][k] = 0.0;
-		}
+
+		if(m[k][k] != 0)
+			for(int i = k + 1; i < m.size(); i++)
+			{
+				subtract_row(m, i, k, m[i][k]/m[k][k], b);
+				m[i][k] = 0.0;
+			}
 	}
 	return new_ematrix(m, v, b);
 }
@@ -305,14 +309,14 @@ ematrix gauss_rank_row(matrix m, row b)
 ematrix gauss(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m.size(); ++k)
+	for(int k = 0; k < m.size()- 1; ++k)
 	{
-		scale_row(m, k, k, b);
-		for(int i = k + 1; i < m.size(); i++)
-		{
-			subtract_row(m, i, k, m[i][k], b);
-			m[i][k] = 0.0;
-		}
+		if(m[k][k] != 0)
+			for(int i = k + 1; i < m.size(); i++)
+			{
+				subtract_row(m, i, k, m[i][k]/m[k][k], b);
+				m[i][k] = 0.0;
+			}
 	}
 	return new_ematrix(m, v, b);
 }
@@ -320,19 +324,19 @@ ematrix gauss(matrix m, row b)
 ematrix gauss_rank_full(matrix m, row b)
 {
 	vars v = new_vars(m.size());
-	for(int k = 0; k < m[0].size(); ++k)
+	for(int k = 0; k < m[0].size()- 1; ++k)
 	{
 		vector<int> row_col = find_max_in_subm(m, k);
 		switch_rows(m, row_col.front(), k, b);
 		switch_cols(m, row_col.back(), k, v);
 
 
-		scale_row(m, k, k, b);
-		for(int i = k + 1; i < m.size(); i++)
-		{
-			subtract_row(m, i, k, m[i][k], b);
-			m[i][k] = 0.0;
-		}
+		if(m[k][k]!= 0)
+			for(int i = k + 1; i < m.size(); i++)
+			{
+				subtract_row(m, i, k, m[i][k]/ m[k][k], b);
+				m[i][k] = 0.0;
+			}
 	}
 	return new_ematrix(m, v, b);
 }
@@ -363,106 +367,267 @@ solution sort(const solution &s)
 	return s1;
 }
 
+result mult(matrix m, row b)
+{
+	result r(b.size());
+	for (int i = 0; i < r.size(); i++)
+	{
+		r[i] = 0;
+		for (int j = 0; j < b.size(); j++)
+			r[i] += m[i][j] * b[j];
+	}
+	return r;
+}
+
+row subtract(result a, result b)
+{
+	row r(a.size());
+	for(int i = 0; i < r.size(); i++)
+		r[i] = a[i] - b[i];
+	return r;
+}
+
+double norm_row_inf(row x)
+{
+	double max = fabs(x[0]);
+	for(int i = 1; i < x.size(); i++)
+		if (fabs(x[i]) > max)
+			max = fabs(x[i]);
+	return max;
+}
+
+double eq(matrix m, row b, solution x)
+{
+	return norm_row_inf(subtract(mult(m, x.r), b));
+}
+
+
+
 int main(int argc,char **argv)
 {    
 	int rank;
 	srand(time(NULL));
-	
+
 	solution s;
 	matrix m;
 	ematrix mg, mgf, mgc, mgr;
-	m = new_matrix(4);
-	m[0][0] = 1;
-	m[0][1] = 1;
-	m[0][2] = 1;
-	m[0][3] = 1;
-	m[1][0] = 2;
-	m[1][1] = 2;
-	m[1][2] = 1;
-	m[1][3] = 1;
-	m[2][0] = 4;
-	m[2][1] = 1;
-	m[2][2] = 3;
-	m[2][3] = 1;
-	m[3][0] = 3;
-	m[3][1] = 5;
-	m[3][2] = 5;
-	m[3][3] = 4;
+	row b;
 	
-	row b(4);
-	b[0] = 21;
-	b[1] = 17;
-	b[2] = 18;
-	b[3] = 13;
+	cout << "Size | Gaussian | Gaussian with choice from column | Gaussian with full choice | Gaussian with choice from row" << endl;
+	
+	cout << "Hilbert matrix" << endl;
+	for (int i = 3; i <= 100; i++)
+	{
+		m = new_matrix(i);
+		hilbert(m);
+		
+		b = new_random_row(i);
+		
+		mg = gauss(m, b);
+		s = sort(back_substitution(mg));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgc = gauss_rank_col(m, b);
+		s = sort(back_substitution(mgc));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+
+		mgf = gauss_rank_full(m, b);
+		s = sort(back_substitution(mgf));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgr = gauss_rank_row(m, b);
+		s = sort(back_substitution(mgr));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << endl;
+	}
+
+
+
+	cout << "PEI matrix" << endl;
+	for (int i = 3; i <= 100; i++)
+	{
+		m = new_matrix(i);
+		pei(m, 5);
+		
+		b = new_random_row(i);		
+		
+		mg = gauss(m, b);
+		s = sort(back_substitution(mg));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgc = gauss_rank_col(m, b);
+		s = sort(back_substitution(mgc));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+
+		mgf = gauss_rank_full(m, b);
+		s = sort(back_substitution(mgf));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgr = gauss_rank_row(m, b);
+		s = sort(back_substitution(mgr));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << endl;
+	}	
+	
+	cout << "Random matrix" << endl;
+	for (int i = 3; i <= 100; i++)
+	{
+		m = new_matrix(i);
+		random_1_1000(m);
+		
+		b = new_random_row(i);
+		
+		mg = gauss(m, b);
+		s = sort(back_substitution(mg));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgc = gauss_rank_col(m, b);
+		s = sort(back_substitution(mgc));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+
+		mgf = gauss_rank_full(m, b);
+		s = sort(back_substitution(mgf));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgr = gauss_rank_row(m, b);
+		s = sort(back_substitution(mgr));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << endl;
+	}	
+	
+	
+	cout << "Dominating diagonal matrix" << endl;
+	for (int i = 3; i <= 100; i++)
+	{
+		m = new_matrix(i);
+		dominating(m);
+		
+		b = new_random_row(i);
+		
+		mg = gauss(m, b);
+		s = sort(back_substitution(mg));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgc = gauss_rank_col(m, b);
+		s = sort(back_substitution(mgc));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+
+		mgf = gauss_rank_full(m, b);
+		s = sort(back_substitution(mgf));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << " ;";
+		
+		mgr = gauss_rank_row(m, b);
+		s = sort(back_substitution(mgr));
+		cout << i << " " << eq(m, b, s) << fixed << setprecision (PRECISION) << endl;
+	}	
+	/*
+	solution s1;
+	matrix m1;
+	ematrix mg1, mgf1, mgc1, mgr1;
+	m1 = new_matrix(5);
+	m1[0][0] = 2;
+	m1[0][1] = 1;
+	m1[0][2] = 1;
+	m1[0][3] = 2;
+	m1[0][4] = 0;
+	m1[1][0] = 1;
+	m1[1][1] = 1;
+	m1[1][2] = 1;
+	m1[1][3] = 1;
+	m1[1][4] = 1;
+	m1[2][0] = 2;
+	m1[2][1] = 0;
+	m1[2][2] = 3;
+	m1[2][3] = 1;
+	m1[2][4] = 0;
+	m1[3][0] = 0;
+	m1[3][1] = 1;
+	m1[3][2] = 0;
+	m1[3][3] = 5;
+	m1[3][4] = 0;
+	m1[4][0] = 1;
+	m1[4][1] = 0;
+	m1[4][2] = 3;
+	m1[4][3] = 1;
+	m1[4][4] = 4;
+	
+	row b1(5);
+	b1[0] = 21;
+	b1[1] = 15;
+	b1[2] = 21;
+	b1[3] = 14;
+	b1[4] = 20;
+
+	hilbert(m1);
 
 	cout << endl;
 	cout << "Gaussian with choice from column" << endl;
 	cout << "Before:" << endl;
-	print(m,b);
+	print(m1,b1);
 	cout << endl;
 	cout << "After:" << endl;
-	mgc = gauss_rank_col(m, b);
-	print(mgc);
+	mgc1 = gauss_rank_col(m1, b1);
+	print(mgc1);
 	cout << "Variable order:" << endl;
-	print(mgc.v);
+	print(mgc1.v);
 	cout << "Solution:" << endl;
-	s = back_substitution(mgc);
-	print(s);
+	s1 = back_substitution(mgc1);
+	print(s1);
 	cout << "Sorted solution" << endl;
-	s = sort(back_substitution(mgc));
-	print(s);
+	s1 = sort(back_substitution(mgc1));
+	print(s1);
+	cout << eq(m1, b1, s1);
 
 	cout << endl;
 	cout << "Gaussian with full choice" << endl;
 	cout << "Before:" << endl;
-	print(m,b);
+	print(m1,b1);
 	cout << endl;
-	mgf = gauss_rank_full(m, b);
+	mgf1 = gauss_rank_full(m1, b1);
 	cout << "After:" << endl;
-	print(mgf);
+	print(mgf1);
 	cout << "Variable order:" << endl;
-	print(mgf.v);
+	print(mgf1.v);
 	cout << "Solution:" << endl;
-	s = back_substitution(mgf);
-	print(s);
+	s1 = back_substitution(mgf1);
+	print(s1);
 	cout << "Sorted solution" << endl;
-	s = sort(back_substitution(mgf));
-	print(s);
+	s1 = sort(back_substitution(mgf1));
+	print(s1);
+	cout << eq(m1, b1, s1);
 	
 	cout << endl;
 	cout << "Gaussian without choices" << endl;
 	cout << "Before:" << endl;
-	print(m,b);
+	print(m1,b1);
 	cout << endl;
-	mg = gauss(m, b);
+	mg1 = gauss(m1, b1);
 	cout << "After:" << endl;
-	print(mg);
+	print(mg1);
 	cout << "Variable order:" << endl;
-	print(mg.v);
+	print(mg1.v);
 	cout << "Solution:" << endl;
-	s = back_substitution(mg);
-	print(s);
+	s1 = back_substitution(mg1);
+	print(s1);
 	cout << "Sorted solution" << endl;
-	s = sort(back_substitution(mg));
-	print(s);
+	s1 = sort(back_substitution(mg1));
+	print(s1);
+	cout << eq(m1, b1, s1);
 
 	
 	cout << endl;
 	cout << "Gaussian with choice from row" << endl;
 	cout << "Before:" << endl;
-	print(m,b);
+	print(m1,b1);
 	cout << endl;
-	mgr = gauss_rank_row(m, b);
+	mgr1 = gauss_rank_row(m1, b1);
 	cout << "After:" << endl;
-	print(mgr);
+	print(mgr1);
 	cout << "Variable order:" << endl;
-	print(mgr.v);
+	print(mgr1.v);
 	cout << "Solution:" << endl;
-	s = back_substitution(mgr);
-	print(s);
+	s1 = back_substitution(mgr1);
+	print(s1);
 	cout << "Sorted solution" << endl;
-	s = sort(back_substitution(mgr));
-	print(s);
-
+	s1 = sort(back_substitution(mgr1));
+	print(s1);
+	cout << eq(m1, b1, s1);*/
 
 }
