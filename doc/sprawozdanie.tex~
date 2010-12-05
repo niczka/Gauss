@@ -186,10 +186,8 @@ Wartość $\tilde x$ to nasze przybliżone rozwiązanie, więc $\| b - A \tilde{
             \includegraphics[width=140mm]{hilbert_plot.png}
         \end{center}
         Wskaźnik uwarunkowania macierzy Hilberta o rozmiarze $n$ to:
-        \begin{center}
-            $ \kappa(H_{n}) = O(\frac{e^{3.5255n}}{\sqrt{n}})$
-        \end{center}
-        Nawet dla małych wartości $n$ wskaźnik uwarunkowania tej macierzy jest zbyt duży, aby dane mogły być reprezentatywne. Powyższy wykres nie prezentuje całego zakresu danych, które wygenerował program.
+        $ \kappa(H_{n}) = O(\frac{e^3.5255n}{\sqrt{n}})$
+        Źle uwarunkowana, leci w kosmos. Wykres nie obejmuje całego zakresu.
     \subsection{Macierz Pei}
         \begin{center}
             \includegraphics[width=140mm]{pei_plot.png}
